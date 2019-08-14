@@ -108,7 +108,7 @@ class TwitterDadJokeBot:
             email_subject = "Twitter Dad Joke Bot Verification id %s" % joke_id
             email_message = self.format_joke_email_message(joke)
             success = self.gmail.send_email([self.verify_email], email_subject, email_message)
-            if not success:
+            if success is False:
                 print("could not send email")
                 print(self.gmail.error_message)
                 return None
