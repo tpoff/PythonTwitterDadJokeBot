@@ -32,7 +32,7 @@ class TwitterDadJokeBot:
                  gmail_password,
                  verify_email,
                  verify_joke=True,
-                 verify_timeframe=60,
+                 verify_timeframe=3600,
                  verify_sleep_interval_time=10):
         self.verify_sleep_interval_time = verify_sleep_interval_time
         self.consumer_api_key = consumer_api_key
@@ -98,6 +98,7 @@ class TwitterDadJokeBot:
         joke = None
         while joke is None:
             # get a joke
+            print("getting joke")
             joke = self.get_joke()
 
             # get a random id for this joke, this is to tag the email we will send so we can check if we
@@ -118,7 +119,9 @@ class TwitterDadJokeBot:
             # otherwise we continue to sleep
             # if verify_time frame time elapses then we exit this loop and post the joke anyway,
             start_wait = time.time()
+            print("waiting for joke verification from users")
             while start_wait + self.verify_timeframe >= time.time():
+                print("checking email for user response")
                 time.sleep(self.verify_sleep_interval_time)
                 recent_email = self.gmail.get_emails(num_emails=1)[0]
                 subject = recent_email['Subject']
@@ -137,6 +140,8 @@ class TwitterDadJokeBot:
                         count = payload.count("PUBLISH_JOKE")
                     if count < payload.count("NEW_JOKE"):
                         action = "NEW_JOKE"
+
+                    print("response found: ", action)
 
                     if action == "NO_JOKE":  # return none if they responded no joke
                         return None
@@ -161,9 +166,11 @@ class TwitterDadJokeBot:
         run the bot,
         :return:
         """
+        print("Twitter Joke Bot Running.")
         if self.verify_joke:
             joke = self.get_verified_joke()
         else:
+            print("getting Joke")
             joke = self.get_joke()
         if joke is not None:
             print("tweeting joke: ", joke)

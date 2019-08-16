@@ -7,6 +7,8 @@ import email
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+# added to avoid errors in pulling too much information at one time.
+imaplib._MAXLINE = 10000000
 
 class GmailWrapper:
     def __init__(self, user_email, password):
